@@ -1,0 +1,64 @@
+go victorydevice
+x.mesh loc=0 spac=0.5
+x.mesh loc=3 spac=0.2
+x.mesh loc=5 spac=0.25
+x.mesh loc=7 spac=0.25
+x.mesh loc=9 spac=0.2
+x.mesh loc=12 spac=0.5
+
+y.mesh loc=0 spac=0.10
+y.mesh loc=1 spac=0.10
+y.mesh loc=2 spac=0.2
+y.mesh loc=5 spac=0.4
+
+#
+region number=1 material=Silicon
+
+#
+# #1=anode
+electrode name=anode number=1 x.min=5 x.max=7 y.min=0 y.max=0
+#
+contact   name=anode workfunction=4.63
+#
+# #1=cathode
+electrode name=cathode number=1 substrate
+#
+contact   name=cathode neutral
+
+
+doping uniform conc=5e+16 n.type direction=y 
+##
+doping gaussian junction=1 conc=1e+19 p.type x.left=0 x.right=3 y.top=0 y.bottom=0 direction=y 
+#
+doping gaussian junction=1 conc=1e+19 p.type x.left=9 x.right=12 y.top=0 y.bottom=0 direction=y 
+#
+doping uniform conc=1e+20 n.type x.left=0 x.right=12 y.top=2 y.bottom=5 direction=y 
+
+##
+#output j.electron j.hole j.conduc j.total ex.field ey.field flowlines e.mobility h.mobility e.temp h.temp con.band qfn j.disp photogen impact 
+save outf=testdiode.str
+
+mesh infile=testdiode.str
+
+victoryvisual testdiode.str
+
+#models auger consrh conmob fldmob evsatmod=0 hvsatmod=0 boltzman bgn print temperature=300
+#
+models srh conmob fldmob evsatmod=0 hvsatmod=0 cvt boltzman print temperature=300 
+#
+impact crowell lamdae=6.2e7 lamdah=3.8e7 
+#
+mobility bn.cvt=4.75e7 bp.cvt=9.925e6 cn.cvt=1.74e5 cp.cvt=8.842e5 taun.cvt=0.125 taup.cvt=0.0317 gamn.cvt=2.5 gamp.cvt=2.2 mu0n.cvt=52.2 mu0p.cvt=44.9 mu1n.cvt=43.4 mu1p.cvt=29.0 mumaxn.cvt=1417.0 mumaxp.cvt=470.5 crn.cvt=9.68e16 crp.cvt=2.23e17 csn.cvt=3.43e20 csp.cvt=6.10e20 alphn.cvt=0.680 alphp.cvt=0.71 betan.cvt=2.0 betap.cvt=2.0 pcn.cvt=0.0 pcp.cvt=0.23e16 deln.cvt=5.82e14 delp.cvt=2.0546e14 
+
+
+#
+solve init
+#
+log outf = testdiode0.log
+solve name=anode vanode=-1 vfinal=1 vstep=0.05
+victoryvisual testdiode0.log
+quit
+
+
+
+
